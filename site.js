@@ -97,3 +97,40 @@ addButton.addEventListener('click', () => {
 })
 
 addTodos()
+
+const getRandomPokemon = async () => {
+  const url = 'https://pokeapi.co/api/v2/pokemon/' + Math.floor(Math.random() * 1025)
+  const res = await fetch(url)
+  if (!res.ok) {
+    return getRandomPokemon()
+  }
+  const pokemon = await res.json()
+  return pokemon
+}
+
+const renderPokemon = (pokemon) => {
+  const parentElement = document.querySelector('.pokemon-ctr')
+  if (!parentElement) return pokemon
+
+  const ShinyOdds = 4096
+  const isShiny = Math.floor(Math.random() * ShinyOdds) === 0
+
+  const spriteUrl = isShiny && pokemon.sprites.front_shiny
+    ? pokemon.sprites.front_shiny
+    : pokemon.sprites.front_default
+
+  const img = document.createElement('img')
+  img.src = spriteUrl
+  img.alt = (isShiny ? 'Shiny ' : '') + pokemon.name
+  img.loading = 'lazy'
+
+  parentElement.innerHTML = '' 
+  parentElement.append(img)
+
+  return pokemon
+}
+
+;(async () => {
+  const pokemon = await getRandomPokemon()
+  renderPokemon(pokemon)
+})()
